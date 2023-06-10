@@ -10,21 +10,22 @@ import com.instamart.orderservice.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.servlet.tags.Param;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class OrderService {
 
   private final OrderRepository orderRepository;
-  private WebClient webClient;
+  private final WebClient.Builder webClientBuilder;
   public void placeOrder(OrderRequest orderRequest) {
 
     List<OrderLineItem> orderLineItemList = orderRequest.getItems()
@@ -42,9 +43,9 @@ public class OrderService {
             .toList();
 
     // Before we place order, we check the inventory first for stock
-    InventoryResponse[] inventoryResponses = webClient.get()
-            .uri("https://localhost:8082/api/inventory",
-                    uriBuilder -> uriBuilder.queryParam("itemCode",orderLineItems).build())
+    InventoryResponse[] inventoryResponses = webClientBuilder.build().get()
+            .uri("http://Inventory/api/inventory",
+                    uriBuilder -> uriBuilder.queryParam("itemCodes",orderLineItems).build())
             .retrieve()
             .bodyToMono(InventoryResponse[].class)
             .block();
@@ -52,8 +53,10 @@ public class OrderService {
     boolean allItemsInStock = Arrays.stream(inventoryResponses)
             .allMatch(InventoryResponse::isInStock);
 
+
     if(allItemsInStock) {
       orderRepository.save(order);
+      log.info("Order placed successfully with id {}",order.getId());
     }
     else
     {

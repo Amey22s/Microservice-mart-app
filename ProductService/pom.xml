@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.instamart</groupId>
-        <artifactId>Microservice-Mart-App</artifactId>
+        <artifactId>Microservice-mart-app</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>ProductService</artifactId>
@@ -46,15 +46,11 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
