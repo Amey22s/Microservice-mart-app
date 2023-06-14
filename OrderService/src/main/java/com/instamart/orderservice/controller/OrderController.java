@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.concurrent.CompletableFuture;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -23,9 +26,8 @@ public class OrderController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public String placeOrder(@RequestBody OrderRequest orderRequest)
+  public CompletableFuture<String> placeOrder(@RequestBody OrderRequest orderRequest)
   {
-    orderService.placeOrder(orderRequest);
-    return "Order placed successfully";
+    return orderService.placeOrder(orderRequest);
   }
 }
